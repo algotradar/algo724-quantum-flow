@@ -26,7 +26,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <Topbar />
         
         <div className="max-w-screen-2xl mx-auto px-6 py-6">
-          {children}
+          <div className={isLightMode ? "text-gray-800" : "text-white"}>
+            {children}
+          </div>
         </div>
         
         <TrustIndicators />

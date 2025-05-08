@@ -4,13 +4,17 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 import PortfolioSummary from '@/components/dashboard/PortfolioSummary';
 import MarketOverview from '@/components/dashboard/MarketOverview';
 import RecentActivity from '@/components/dashboard/RecentActivity';
+import { useTheme } from '@/components/theme/ThemeProvider';
 
 const Index = () => {
+  const { theme } = useTheme();
+  const isLightMode = theme === 'light';
+
   return (
     <DashboardLayout>
       <div className="mb-8">
-        <h1 className="text-4xl font-display font-medium text-white mb-2">Dashboard</h1>
-        <p className="text-gray-400">
+        <h1 className={`text-4xl font-display font-medium ${isLightMode ? 'text-gray-800' : 'text-white'} mb-2`}>Dashboard</h1>
+        <p className={isLightMode ? 'text-gray-600' : 'text-gray-400'}>
           Welcome to Algo724. Monitor your portfolio, track algorithm performance, and execute trades with precision.
         </p>
       </div>
