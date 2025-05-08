@@ -2,6 +2,7 @@
 import React from 'react';
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import { useTheme } from '@/components/theme/ThemeProvider';
+import { useCryptoPrices } from '@/hooks/useCryptoPrices';
 
 interface MarketData {
   pair: string;
@@ -20,42 +21,44 @@ interface MarketData {
   };
 }
 
-const marketData: MarketData[] = [
-  {
-    pair: 'BTC/USDT',
-    iconPair: 'BT',
-    price: '$72,453.85',
-    change24h: { value: '+3.45%', isPositive: true },
-    binance: '$72,453.85',
-    coinbase: '$72,455.12',
-    okx: '$72,451.27',
-    arbitrage: { value: 'Opportunity', isOpportunity: true }
-  },
-  {
-    pair: 'ETH/USDT',
-    iconPair: 'ET',
-    price: '$3,874.29',
-    change24h: { value: '-1.23%', isPositive: false },
-    binance: '$3,874.29',
-    coinbase: '$3,874.85',
-    okx: '$3,873.98',
-    arbitrage: { value: '0.02%', isOpportunity: false }
-  },
-  {
-    pair: 'SOL/USDT',
-    iconPair: 'SO',
-    price: '$184.35',
-    change24h: { value: '+5.67%', isPositive: true },
-    binance: '$184.35',
-    coinbase: '$184.42',
-    okx: '$184.28',
-    arbitrage: { value: '0.08%', isOpportunity: false }
-  }
-];
-
 const MarketOverview = () => {
   const { theme } = useTheme();
   const isLightMode = theme === 'light';
+  const { formattedPrices, isLoading } = useCryptoPrices();
+
+  // Generate market data using real-time prices
+  const marketData: MarketData[] = [
+    {
+      pair: 'BTC/USDT',
+      iconPair: 'BT',
+      price: isLoading ? '$72,453.85' : formattedPrices.BTC,
+      change24h: { value: '+3.45%', isPositive: true },
+      binance: isLoading ? '$72,453.85' : formattedPrices.BTC,
+      coinbase: isLoading ? '$72,455.12' : formattedPrices.BTC,
+      okx: isLoading ? '$72,451.27' : formattedPrices.BTC,
+      arbitrage: { value: 'Opportunity', isOpportunity: true }
+    },
+    {
+      pair: 'ETH/USDT',
+      iconPair: 'ET',
+      price: isLoading ? '$3,874.29' : formattedPrices.ETH,
+      change24h: { value: '-1.23%', isPositive: false },
+      binance: isLoading ? '$3,874.29' : formattedPrices.ETH,
+      coinbase: isLoading ? '$3,874.85' : formattedPrices.ETH,
+      okx: isLoading ? '$3,873.98' : formattedPrices.ETH,
+      arbitrage: { value: '0.02%', isOpportunity: false }
+    },
+    {
+      pair: 'SOL/USDT',
+      iconPair: 'SO',
+      price: isLoading ? '$184.35' : formattedPrices.SOL,
+      change24h: { value: '+5.67%', isPositive: true },
+      binance: isLoading ? '$184.35' : formattedPrices.SOL,
+      coinbase: isLoading ? '$184.42' : formattedPrices.SOL,
+      okx: isLoading ? '$184.28' : formattedPrices.SOL,
+      arbitrage: { value: '0.08%', isOpportunity: false }
+    }
+  ];
 
   return (
     <div className="glass-card p-6 animate-fade-in" style={{animationDelay: '0.3s'}}>
@@ -129,6 +132,11 @@ const MarketOverview = () => {
           </tbody>
         </table>
       </div>
+      {isLoading && (
+        <div className="flex justify-center items-center mt-4">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-algo-lime"></div>
+        </div>
+      )}
     </div>
   );
 };

@@ -2,6 +2,7 @@
 import React from 'react';
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import { useTheme } from '@/components/theme/ThemeProvider';
+import { useCryptoPrices } from '@/hooks/useCryptoPrices';
 
 interface ActivityItem {
   id: number;
@@ -14,50 +15,52 @@ interface ActivityItem {
   change?: string;
 }
 
-const activities: ActivityItem[] = [
-  {
-    id: 1,
-    type: 'entered',
-    coin: 'BTC',
-    exchange: 'Binance',
-    price: '$72,453',
-    amount: '1.2345',
-    amountValue: 'BTC',
-  },
-  {
-    id: 2,
-    type: 'exited',
-    coin: 'ETH',
-    exchange: 'Coinbase',
-    price: '$3,874',
-    amount: '15.6789',
-    amountValue: 'ETH',
-    change: '+2.3%',
-  },
-  {
-    id: 3,
-    type: 'entered',
-    coin: 'SOL',
-    exchange: 'OKX',
-    price: '$184',
-    amount: '125.4568',
-    amountValue: 'SOL',
-  },
-  {
-    id: 4,
-    type: 'exited',
-    coin: 'BTC',
-    exchange: 'Binance',
-    price: '$72,451',
-    amount: '0.8765',
-    amountValue: 'BTC',
-    change: '+1.5%',
-  },
-];
-
 const RecentActivity = () => {
   const { theme } = useTheme();
   const isLightMode = theme === 'light';
+  const { formattedPrices, isLoading } = useCryptoPrices();
+
+  // Generate activities with real-time prices
+  const activities: ActivityItem[] = [
+    {
+      id: 1,
+      type: 'entered',
+      coin: 'BTC',
+      exchange: 'Binance',
+      price: isLoading ? '$72,453' : formattedPrices.BTC,
+      amount: '1.2345',
+      amountValue: 'BTC',
+    },
+    {
+      id: 2,
+      type: 'exited',
+      coin: 'ETH',
+      exchange: 'Coinbase',
+      price: isLoading ? '$3,874' : formattedPrices.ETH,
+      amount: '15.6789',
+      amountValue: 'ETH',
+      change: '+2.3%',
+    },
+    {
+      id: 3,
+      type: 'entered',
+      coin: 'SOL',
+      exchange: 'OKX',
+      price: isLoading ? '$184' : formattedPrices.SOL,
+      amount: '125.4568',
+      amountValue: 'SOL',
+    },
+    {
+      id: 4,
+      type: 'exited',
+      coin: 'BTC',
+      exchange: 'Binance',
+      price: isLoading ? '$72,451' : formattedPrices.BTC,
+      amount: '0.8765',
+      amountValue: 'BTC',
+      change: '+1.5%',
+    },
+  ];
 
   return (
     <div className="glass-card p-6 animate-fade-in" style={{animationDelay: '0.4s'}}>
