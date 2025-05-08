@@ -1,13 +1,27 @@
-
 import React from 'react';
-import { Bell, Search, Shield, Moon, Sun } from 'lucide-react';
+import { Bell, Search, Shield, Moon, Sun, LogOut } from 'lucide-react';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { Toggle } from '@/components/ui/toggle';
+import { supabase } from '@/lib/supabaseClient';
 
 const Topbar = () => {
   const { theme, toggleTheme } = useTheme();
   const isLightMode = theme === 'light';
+  const [user, setUser] = React.useState(null);
   
+  React.useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => listener?.subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
+
   const currentTime = new Date().toLocaleTimeString('en-US', { 
     hour12: false, 
     hour: '2-digit', 
@@ -62,6 +76,17 @@ const Topbar = () => {
           <Shield size={14} className="text-algo-lime" />
           <span className={`text-xs font-medium ${isLightMode ? 'text-gray-800' : 'text-white'}`}>$2.8M</span>
         </div>
+
+        {user && (
+          <button
+            onClick={handleLogout}
+            className={`flex items-center gap-1 px-3 py-1 rounded-full ${isLightMode ? 'bg-gray-100 border border-gray-200 text-gray-800' : 'bg-white/5 border border-white/10 text-white'} hover:bg-algo-lime/20 transition-colors`}
+            title="Log out"
+          >
+            <LogOut size={16} />
+            <span className="text-xs font-medium">Log out</span>
+          </button>
+        )}
       </div>
     </div>
   );
