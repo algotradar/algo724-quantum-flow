@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { ArrowUp, ArrowDown } from 'lucide-react';
+import { useTheme } from '@/components/theme/ThemeProvider';
 
 interface MarketData {
   pair: string;
@@ -53,10 +54,13 @@ const marketData: MarketData[] = [
 ];
 
 const MarketOverview = () => {
+  const { theme } = useTheme();
+  const isLightMode = theme === 'light';
+
   return (
     <div className="glass-card p-6 animate-fade-in" style={{animationDelay: '0.3s'}}>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-display font-medium text-white">Market Overview</h2>
+        <h2 className={`text-xl font-display font-medium ${isLightMode ? 'text-gray-800' : 'text-white'}`}>Market Overview</h2>
         <button className="text-xs text-algo-lime hover:underline flex items-center">
           View All
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="ml-1"><polyline points="9 18 15 12 9 6"/></svg>
@@ -91,11 +95,11 @@ const MarketOverview = () => {
                     }`}>
                       {item.iconPair}
                     </div>
-                    <span className="text-sm font-medium text-white">{item.pair}</span>
+                    <span className={`text-sm font-medium ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.pair}</span>
                   </div>
                 </td>
                 <td className="py-4">
-                  <span className="text-sm text-white">{item.price}</span>
+                  <span className={`text-sm ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.price}</span>
                 </td>
                 <td className="py-4">
                   <span className={`text-sm ${item.change24h.isPositive ? 'text-algo-lime' : 'text-red-400'}`}>
@@ -103,13 +107,13 @@ const MarketOverview = () => {
                   </span>
                 </td>
                 <td className="py-4">
-                  <span className="text-sm text-white">{item.binance}</span>
+                  <span className={`text-sm ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.binance}</span>
                 </td>
                 <td className="py-4">
-                  <span className="text-sm text-white">{item.coinbase}</span>
+                  <span className={`text-sm ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.coinbase}</span>
                 </td>
                 <td className="py-4">
-                  <span className="text-sm text-white">{item.okx}</span>
+                  <span className={`text-sm ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.okx}</span>
                 </td>
                 <td className="py-4 text-right pr-2">
                   <span className={`text-xs font-medium px-3 py-1 rounded-full ${

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { ArrowUp, ArrowDown } from 'lucide-react';
+import { useTheme } from '@/components/theme/ThemeProvider';
 
 interface ActivityItem {
   id: number;
@@ -55,10 +56,13 @@ const activities: ActivityItem[] = [
 ];
 
 const RecentActivity = () => {
+  const { theme } = useTheme();
+  const isLightMode = theme === 'light';
+
   return (
     <div className="glass-card p-6 animate-fade-in" style={{animationDelay: '0.4s'}}>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-display font-medium text-white">Recent Activity</h2>
+        <h2 className={`text-xl font-display font-medium ${isLightMode ? 'text-gray-800' : 'text-white'}`}>Recent Activity</h2>
         <button className="text-xs text-algo-lime hover:underline flex items-center">
           View All
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="ml-1"><polyline points="9 18 15 12 9 6"/></svg>
@@ -85,7 +89,7 @@ const RecentActivity = () => {
                 
                 <div>
                   <div className="flex items-center mb-1">
-                    <h3 className="text-sm font-medium text-white">
+                    <h3 className={`text-sm font-medium ${isLightMode ? 'text-gray-800' : 'text-white'}`}>
                       {activity.type === 'entered' ? 'Entered' : 'Exited'} {activity.coin}
                     </h3>
                     {activity.change && (
@@ -106,7 +110,7 @@ const RecentActivity = () => {
               </div>
               
               <div className="text-right">
-                <div className="text-sm text-white font-medium">{activity.price}</div>
+                <div className={`text-sm ${isLightMode ? 'text-gray-800' : 'text-white'} font-medium`}>{activity.price}</div>
                 <div className="text-xs text-gray-400">
                   <span className="font-medium">{activity.amount}</span> {activity.amountValue}
                 </div>

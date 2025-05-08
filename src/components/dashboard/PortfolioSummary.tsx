@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { useTheme } from '@/components/theme/ThemeProvider';
 
 const data = [
   { name: 'BTC', value: 45 },
@@ -12,6 +13,9 @@ const data = [
 const COLORS = ['#F7931A', '#627EEA', '#00FFA3', '#26A17B'];
 
 const PortfolioSummary = () => {
+  const { theme } = useTheme();
+  const isLightMode = theme === 'light';
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div className="glass-card p-5 animate-fade-in">
@@ -23,7 +27,7 @@ const PortfolioSummary = () => {
         </div>
         
         <div className="flex flex-col">
-          <h2 className="text-3xl font-display font-medium text-white mb-1">$2,845,633</h2>
+          <h2 className={`text-3xl font-display font-medium ${isLightMode ? 'text-gray-800' : 'text-white'} mb-1`}>$2,845,633</h2>
           <div className="flex items-center">
             <span className="text-algo-lime text-sm font-medium">+12.40%</span>
             <span className="text-xs text-gray-400 ml-2">vs last week</span>
@@ -40,7 +44,7 @@ const PortfolioSummary = () => {
         </div>
         
         <div className="flex flex-col">
-          <h2 className="text-3xl font-display font-medium text-white mb-1">$324,516</h2>
+          <h2 className={`text-3xl font-display font-medium ${isLightMode ? 'text-gray-800' : 'text-white'} mb-1`}>$324,516</h2>
           <div className="flex items-center">
             <span className="text-algo-lime text-sm font-medium">+8.20%</span>
             <span className="text-xs text-gray-400 ml-2">vs last week</span>
@@ -52,7 +56,7 @@ const PortfolioSummary = () => {
         <div className="flex justify-between items-start mb-4">
           <div>
             <h3 className="text-xs font-medium uppercase text-gray-400">Allocation</h3>
-            <h2 className="text-2xl font-display font-medium text-white mt-1">87.2%</h2>
+            <h2 className={`text-2xl font-display font-medium ${isLightMode ? 'text-gray-800' : 'text-white'} mt-1`}>87.2%</h2>
             <div className="flex items-center">
               <span className="text-algo-lime text-sm font-medium">+3.50%</span>
               <span className="text-xs text-gray-400 ml-2">vs last week</span>
@@ -85,7 +89,7 @@ const PortfolioSummary = () => {
           {data.map((item, index) => (
             <div key={index} className="flex items-center gap-1">
               <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[index] }}></div>
-              <span className="text-xs text-white">{item.name}</span>
+              <span className={`text-xs ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.name}</span>
             </div>
           ))}
         </div>
