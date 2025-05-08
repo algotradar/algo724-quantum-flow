@@ -72,10 +72,6 @@ const Topbar = () => {
           </div>
         </div>
         
-        <div className={`flex items-center gap-1 ${isLightMode ? 'bg-gray-100 border border-gray-200' : 'bg-white/5 border border-white/10'} rounded-full px-3 py-1`}>
-          <Shield size={14} className="text-algo-lime" />
-          <span className={`text-xs font-medium ${isLightMode ? 'text-gray-800' : 'text-white'}`}>$2.8M</span>
-        </div>
 
         {user && (
           <button

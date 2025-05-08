@@ -53,9 +53,11 @@ const AuthLogin = ({ setUser, isLightMode }: AuthLoginProps) => {
 
   // Email login component logic
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
   const [message, setMessage] = useState("");
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     const { error } = await supabase.auth.signInWithOtp({ email });
     if (error) {
@@ -90,8 +92,15 @@ const AuthLogin = ({ setUser, isLightMode }: AuthLoginProps) => {
         data-use_fedcm_for_prompt="true"
       ></div>
       <div id="google-signin-btn"></div>
-      <p style={{ marginTop: 16 }}>Please sign in with Google to access your dashboard.</p>
-      <form onSubmit={handleEmailLogin} style={{ marginTop: 24 }}>
+      <h2 style={{ marginTop: 24, fontSize: 24, fontWeight: 700, color: isLightMode ? '#222' : '#fff' }}>
+        {isSignUp ? 'Sign Up for an Account' : 'Sign In to Your Account'}
+      </h2>
+      <p style={{ marginTop: 8, color: isLightMode ? '#333' : '#eee', fontWeight: 500 }}>
+        {isSignUp
+          ? 'Create a new account below. Already registered? Switch to sign in.'
+          : "Don't have an account? Switch to sign up below."}
+      </p>
+      <form onSubmit={handleEmailAuth} style={{ marginTop: 24, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <input
           type="email"
           placeholder="Your email"
@@ -99,15 +108,33 @@ const AuthLogin = ({ setUser, isLightMode }: AuthLoginProps) => {
           onChange={e => setEmail(e.target.value)}
           required
           className="rounded px-3 py-2 border"
-          style={{ color: 'black' }}
+          style={{ color: 'black', marginBottom: 8, minWidth: 220 }}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          required
+          className="rounded px-3 py-2 border"
+          style={{ color: 'black', marginBottom: 8, minWidth: 220 }}
         />
         <button
           type="submit"
-          className="ml-2 px-4 py-2 rounded bg-algo-lime text-black font-medium"
+          className="px-4 py-2 rounded bg-algo-lime text-black font-medium"
+          style={{ width: '100%', marginBottom: 8 }}
         >
-          Email Login
+          {isSignUp ? 'Sign Up' : 'Sign In'}
         </button>
-        {message && <div style={{ marginTop: 8, color: 'white', fontWeight: 'bold' }}>{message}</div>}
+        <button
+          type="button"
+          onClick={() => { setIsSignUp(!isSignUp); setMessage(""); }}
+          className="text-sm font-semibold"
+          style={{ background: isLightMode ? '#f0f0f0' : '#222', color: isLightMode ? '#222' : '#fff', border: '1px solid #ccc', borderRadius: 6, padding: '6px 12px', cursor: 'pointer' }}
+        >
+          {isSignUp ? 'Already have an account? Sign in' : "Need an account? Sign up"}
+        </button>
+        {message && <div style={{ marginTop: 8, color: isLightMode ? '#d32f2f' : 'white', fontWeight: 'bold' }}>{message}</div>}
       </form>
     </div>
   );
