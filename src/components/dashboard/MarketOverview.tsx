@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { useCryptoPrices } from '@/hooks/useCryptoPrices';
+import { useBinance24hTicker } from '@/hooks/useCryptoPrices';
 
 interface MarketData {
   pair: string;
@@ -25,6 +25,7 @@ const MarketOverview = () => {
   const { theme } = useTheme();
   const isLightMode = theme === 'light';
   const { formattedPrices, isLoading } = useCryptoPrices();
+  const { formatted: binance24h, isLoading: isLoading24h } = useBinance24hTicker();
 
   // Generate market data using real-time prices
   const marketData: MarketData[] = [
@@ -33,9 +34,9 @@ const MarketOverview = () => {
       iconPair: 'BT',
       price: isLoading ? '$72,453.85' : formattedPrices.BTC,
       change24h: { value: '+3.45%', isPositive: true },
-      binance: isLoading ? '$72,453.85' : formattedPrices.BTC,
-      coinbase: isLoading ? '$72,455.12' : formattedPrices.BTC,
-      okx: isLoading ? '$72,451.27' : formattedPrices.BTC,
+      binance: isLoading24h || !binance24h ? '-' : binance24h.BTC.high,
+      coinbase: isLoading24h || !binance24h ? '-' : binance24h.BTC.low,
+      okx: isLoading24h || !binance24h ? '-' : binance24h.BTC.volume,
       arbitrage: { value: 'Opportunity', isOpportunity: true }
     },
     {
@@ -43,9 +44,9 @@ const MarketOverview = () => {
       iconPair: 'ET',
       price: isLoading ? '$3,874.29' : formattedPrices.ETH,
       change24h: { value: '-1.23%', isPositive: false },
-      binance: isLoading ? '$3,874.29' : formattedPrices.ETH,
-      coinbase: isLoading ? '$3,874.85' : formattedPrices.ETH,
-      okx: isLoading ? '$3,873.98' : formattedPrices.ETH,
+      binance: isLoading24h || !binance24h ? '-' : binance24h.ETH.high,
+      coinbase: isLoading24h || !binance24h ? '-' : binance24h.ETH.low,
+      okx: isLoading24h || !binance24h ? '-' : binance24h.ETH.volume,
       arbitrage: { value: '0.02%', isOpportunity: false }
     },
     {
@@ -53,9 +54,9 @@ const MarketOverview = () => {
       iconPair: 'SO',
       price: isLoading ? '$184.35' : formattedPrices.SOL,
       change24h: { value: '+5.67%', isPositive: true },
-      binance: isLoading ? '$184.35' : formattedPrices.SOL,
-      coinbase: isLoading ? '$184.42' : formattedPrices.SOL,
-      okx: isLoading ? '$184.28' : formattedPrices.SOL,
+      binance: isLoading24h || !binance24h ? '-' : binance24h.SOL.high,
+      coinbase: isLoading24h || !binance24h ? '-' : binance24h.SOL.low,
+      okx: isLoading24h || !binance24h ? '-' : binance24h.SOL.volume,
       arbitrage: { value: '0.08%', isOpportunity: false }
     }
   ];
@@ -73,13 +74,13 @@ const MarketOverview = () => {
       <div className="w-full overflow-auto">
         <table className="w-full min-w-[800px]">
           <thead>
-            <tr className="text-left text-gray-400">
+            <tr className={isLightMode ? 'text-gray-500' : 'text-gray-400'}>
               <th className="text-xs font-medium pb-4 pl-2">PAIR</th>
               <th className="text-xs font-medium pb-4">PRICE</th>
               <th className="text-xs font-medium pb-4">24H</th>
-              <th className="text-xs font-medium pb-4">BINANCE</th>
-              <th className="text-xs font-medium pb-4">COINBASE</th>
-              <th className="text-xs font-medium pb-4">OKX</th>
+              <th className="text-xs font-medium pb-4">HIGH</th>
+              <th className="text-xs font-medium pb-4">LOW</th>
+              <th className="text-xs font-medium pb-4">VOLUME</th>
               <th className="text-xs font-medium pb-4 text-right pr-2">ARBITRAGE</th>
             </tr>
           </thead>
@@ -87,13 +88,13 @@ const MarketOverview = () => {
             {marketData.map((item, index) => (
               <tr 
                 key={index} 
-                className="border-t border-white/5 hover:bg-white/5 transition-colors"
+                className={isLightMode ? 'border-t border-black/10 hover:bg-black/5 transition-colors' : 'border-t border-white/5 hover:bg-white/5 transition-colors'}
               >
                 <td className="py-4 pl-2">
                   <div className="flex items-center gap-3">
                     <div className={`w-7 h-7 rounded-md flex items-center justify-center text-xs font-medium ${
-                      item.iconPair === 'BT' ? 'bg-[#F7931A]/20 text-[#F7931A]' :
-                      item.iconPair === 'ET' ? 'bg-[#627EEA]/20 text-[#627EEA]' :
+                      item.iconPair === 'BT' ? (isLightMode ? 'bg-[#F7931A]/20 text-[#F7931A]' : 'bg-[#F7931A]/20 text-[#F7931A]') :
+                      item.iconPair === 'ET' ? (isLightMode ? 'bg-[#627EEA]/20 text-[#627EEA]' : 'bg-[#627EEA]/20 text-[#627EEA]') :
                       'bg-[#00FFA3]/20 text-[#00FFA3]'
                     }`}>
                       {item.iconPair}
@@ -105,9 +106,7 @@ const MarketOverview = () => {
                   <span className={`text-sm ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.price}</span>
                 </td>
                 <td className="py-4">
-                  <span className={`text-sm ${item.change24h.isPositive ? 'text-algo-lime' : 'text-red-400'}`}>
-                    {item.change24h.value}
-                  </span>
+                  <span className={`text-sm ${item.change24h.isPositive ? 'text-algo-lime' : 'text-red-400'}`}>{item.change24h.value}</span>
                 </td>
                 <td className="py-4">
                   <span className={`text-sm ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.binance}</span>
@@ -121,8 +120,8 @@ const MarketOverview = () => {
                 <td className="py-4 text-right pr-2">
                   <span className={`text-xs font-medium px-3 py-1 rounded-full ${
                     item.arbitrage.isOpportunity 
-                      ? 'bg-algo-lime/20 text-algo-lime' 
-                      : 'bg-white/10 text-gray-300'
+                      ? (isLightMode ? 'bg-algo-lime/20 text-algo-lime' : 'bg-algo-lime/20 text-algo-lime')
+                      : (isLightMode ? 'bg-black/10 text-gray-500' : 'bg-white/10 text-gray-300')
                   }`}>
                     {item.arbitrage.value}
                   </span>

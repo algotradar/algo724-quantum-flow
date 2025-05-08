@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from 'react';
 
 type Theme = 'dark' | 'light';
@@ -13,13 +12,13 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Initialize theme from localStorage or default to dark
   const [theme, setTheme] = useState<Theme>(() => {
-    const savedTheme = localStorage.getItem('algo724-theme');
+    const savedTheme = localStorage.getItem('algotradar-theme');
     return (savedTheme as Theme) || 'dark';
   });
 
   // Update theme in localStorage and apply CSS class when theme changes
   useEffect(() => {
-    localStorage.setItem('algo724-theme', theme);
+    localStorage.setItem('algotradar-theme', theme);
     
     if (theme === 'light') {
       document.documentElement.classList.add('light');

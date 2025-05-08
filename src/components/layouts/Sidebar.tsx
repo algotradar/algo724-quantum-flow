@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -74,7 +73,7 @@ const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
           </div>
           {!collapsed && (
             <span className={`ml-2 ${isLightMode ? 'text-gray-800' : 'text-algo-lime'} font-display font-medium tracking-wider text-lg animate-slide-right`}>
-              ALGO724
+              ALGOTRADAR
             </span>
           )}
         </div>
