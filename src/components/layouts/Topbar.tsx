@@ -1,8 +1,12 @@
 
 import React from 'react';
-import { Bell, Search, Shield } from 'lucide-react';
+import { Bell, Search, Shield, Moon, Sun } from 'lucide-react';
+import { useTheme } from '@/components/theme/ThemeProvider';
+import { Toggle } from '@/components/ui/toggle';
 
 const Topbar = () => {
+  const { theme, toggleTheme } = useTheme();
+  
   const currentTime = new Date().toLocaleTimeString('en-US', { 
     hour12: false, 
     hour: '2-digit', 
@@ -24,6 +28,15 @@ const Topbar = () => {
       </div>
       
       <div className="flex items-center gap-4">
+        <Toggle 
+          pressed={theme === 'light'}
+          onPressedChange={toggleTheme}
+          aria-label="Toggle theme"
+          className="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/5"
+        >
+          {theme === 'light' ? <Sun size={16} className="text-algo-lime" /> : <Moon size={16} className="text-gray-400" />}
+        </Toggle>
+        
         <div className="relative">
           <input
             type="text"
