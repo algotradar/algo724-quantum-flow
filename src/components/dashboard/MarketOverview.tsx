@@ -1,20 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { useCryptoPrices } from '@/hooks/useCryptoPrices';
 import { useBinance24hTicker } from '@/hooks/useCryptoPrices';
 
 interface MarketData {
-  pair: string;
+  asset: string;
   iconPair: string;
   price: string;
   change24h: {
     value: string;
     isPositive: boolean;
   };
-  binance: string;
-  coinbase: string;
-  okx: string;
+  high: string;
+  low: string;
+  volume: string;
   arbitrage: {
     value: string;
     isOpportunity: boolean;
@@ -24,42 +24,45 @@ interface MarketData {
 const MarketOverview = () => {
   const { theme } = useTheme();
   const isLightMode = theme === 'light';
-  const { formattedPrices, isLoading } = useCryptoPrices();
-  const { formatted: binance24h, isLoading: isLoading24h } = useBinance24hTicker();
 
-  // Generate market data using real-time prices
-  const marketData: MarketData[] = [
-    {
-      pair: 'BTC/USDT',
-      iconPair: 'BT',
-      price: isLoading ? '$72,453.85' : formattedPrices.BTC,
-      change24h: { value: '+3.45%', isPositive: true },
-      binance: isLoading24h || !binance24h ? '-' : binance24h.BTC.high,
-      coinbase: isLoading24h || !binance24h ? '-' : binance24h.BTC.low,
-      okx: isLoading24h || !binance24h ? '-' : binance24h.BTC.volume,
-      arbitrage: { value: 'Opportunity', isOpportunity: true }
-    },
-    {
-      pair: 'ETH/USDT',
-      iconPair: 'ET',
-      price: isLoading ? '$3,874.29' : formattedPrices.ETH,
-      change24h: { value: '-1.23%', isPositive: false },
-      binance: isLoading24h || !binance24h ? '-' : binance24h.ETH.high,
-      coinbase: isLoading24h || !binance24h ? '-' : binance24h.ETH.low,
-      okx: isLoading24h || !binance24h ? '-' : binance24h.ETH.volume,
-      arbitrage: { value: '0.02%', isOpportunity: false }
-    },
-    {
-      pair: 'SOL/USDT',
-      iconPair: 'SO',
-      price: isLoading ? '$184.35' : formattedPrices.SOL,
-      change24h: { value: '+5.67%', isPositive: true },
-      binance: isLoading24h || !binance24h ? '-' : binance24h.SOL.high,
-      coinbase: isLoading24h || !binance24h ? '-' : binance24h.SOL.low,
-      okx: isLoading24h || !binance24h ? '-' : binance24h.SOL.volume,
-      arbitrage: { value: '0.08%', isOpportunity: false }
-    }
-  ];
+  const [marketData, setMarketData] = useState<MarketData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMarketData = async () => {
+      setIsLoading(true);
+      try {
+        const assets = [
+          { symbol: 'BTCUSDT', asset: 'BTC/USDT', iconPair: 'BT' },
+          { symbol: 'ETHUSDT', asset: 'ETH/USDT', iconPair: 'ET' },
+          { symbol: 'SOLUSDT', asset: 'SOL/USDT', iconPair: 'SO' },
+        ];
+        const responses = await Promise.all(
+          assets.map(({ symbol }) =>
+            fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`).then(res => res.json())
+          )
+        );
+        const mapped = responses.map((data, idx) => ({
+          asset: assets[idx].asset,
+          iconPair: assets[idx].iconPair,
+          price: data && data.lastPrice ? `$${Math.round(parseFloat(data.lastPrice)).toLocaleString()}` : '-',
+          change24h: {
+            value: data && data.priceChangePercent ? `${Math.round(parseFloat(data.priceChangePercent))}%` : '-',
+            isPositive: data && data.priceChangePercent ? parseFloat(data.priceChangePercent) >= 0 : true,
+          },
+          high: data && data.highPrice ? Math.round(parseFloat(data.highPrice)).toLocaleString() : '-',
+          low: data && data.lowPrice ? Math.round(parseFloat(data.lowPrice)).toLocaleString() : '-',
+          volume: data && data.volume ? Math.round(parseFloat(data.volume)).toLocaleString() : '-',
+          arbitrage: { value: '-', isOpportunity: false },
+        }));
+        setMarketData(mapped);
+      } catch (e) {
+        setMarketData([]);
+      }
+      setIsLoading(false);
+    };
+    fetchMarketData();
+  }, []);
 
   return (
     <div className="glass-card p-6 animate-fade-in" style={{animationDelay: '0.3s'}}>
@@ -75,7 +78,7 @@ const MarketOverview = () => {
         <table className="w-full min-w-[800px]">
           <thead>
             <tr className={isLightMode ? 'text-gray-500' : 'text-gray-400'}>
-              <th className="text-xs font-medium pb-4 pl-2">PAIR</th>
+              <th className="text-xs font-medium pb-4 pl-2">ASSET</th>
               <th className="text-xs font-medium pb-4">PRICE</th>
               <th className="text-xs font-medium pb-4">24H</th>
               <th className="text-xs font-medium pb-4">HIGH</th>
@@ -99,23 +102,23 @@ const MarketOverview = () => {
                     }`}>
                       {item.iconPair}
                     </div>
-                    <span className={`text-sm font-medium ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.pair}</span>
+                    <span className={`text-sm font-medium ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.asset}</span>
                   </div>
                 </td>
-                <td className="py-4">
+                <td className="py-4 pl-7">
                   <span className={`text-sm ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.price}</span>
                 </td>
-                <td className="py-4">
+                <td className="py-4 pl-7">
                   <span className={`text-sm ${item.change24h.isPositive ? 'text-algo-lime' : 'text-red-400'}`}>{item.change24h.value}</span>
                 </td>
-                <td className="py-4">
-                  <span className={`text-sm ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.binance}</span>
+                <td className="py-4 pl-7">
+                  <span className={`text-sm ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.high}</span>
                 </td>
-                <td className="py-4">
-                  <span className={`text-sm ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.coinbase}</span>
+                <td className="py-4 pl-7">
+                  <span className={`text-sm ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.low}</span>
                 </td>
-                <td className="py-4">
-                  <span className={`text-sm ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.okx}</span>
+                <td className="py-4 pl-16">
+                  <span className={`text-sm ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.volume}</span>
                 </td>
                 <td className="py-4 text-right pr-2">
                   <span className={`text-xs font-medium px-3 py-1 rounded-full ${
