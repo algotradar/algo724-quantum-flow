@@ -3,6 +3,8 @@ import { ArrowUp, ArrowDown } from 'lucide-react';
 import { useTheme } from '@/components/theme/ThemeProvider';
 import { useCryptoPrices } from '@/hooks/useCryptoPrices';
 import { useBinance24hTicker } from '@/hooks/useCryptoPrices';
+import { SiBitcoin, SiEthereum } from 'react-icons/si';
+import { SiSolana } from 'react-icons/si';
 
 interface MarketData {
   asset: string;
@@ -96,11 +98,23 @@ const MarketOverview = () => {
                 <td className="py-4 pl-2">
                   <div className="flex items-center gap-3">
                     <div className={`w-7 h-7 rounded-md flex items-center justify-center text-xs font-medium ${
-                      item.iconPair === 'BT' ? (isLightMode ? 'bg-[#F7931A]/20 text-[#F7931A]' : 'bg-[#F7931A]/20 text-[#F7931A]') :
-                      item.iconPair === 'ET' ? (isLightMode ? 'bg-[#627EEA]/20 text-[#627EEA]' : 'bg-[#627EEA]/20 text-[#627EEA]') :
-                      'bg-[#00FFA3]/20 text-[#00FFA3]'
+                      item.asset === 'BTC/USDT'
+                        ? (isLightMode ? 'bg-[#F7931A]/20 text-[#F7931A]' : 'bg-[#F7931A]/20 text-[#F7931A]')
+                        : item.asset === 'ETH/USDT'
+                        ? (isLightMode ? 'bg-[#627EEA]/20 text-[#627EEA]' : 'bg-[#627EEA]/20 text-[#627EEA]')
+                        : item.asset === 'SOL/USDT'
+                        ? (isLightMode ? 'bg-[#9945FF]/20 text-[#9945FF]' : 'bg-[#9945FF]/20 text-[#9945FF]')
+                        : ''
                     }`}>
-                      {item.iconPair}
+                      {item.asset === 'BTC/USDT' ? (
+                        <SiBitcoin size={20} />
+                      ) : item.asset === 'ETH/USDT' ? (
+                        <SiEthereum size={20} />
+                      ) : item.asset === 'SOL/USDT' ? (
+                        <SiSolana size={20} />
+                      ) : (
+                        item.iconPair
+                      )}
                     </div>
                     <span className={`text-sm font-medium ${isLightMode ? 'text-gray-800' : 'text-white'}`}>{item.asset}</span>
                   </div>
